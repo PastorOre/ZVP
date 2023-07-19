@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../style/main.css">
+</head>
+<body>
+    <div id="wrapper">
+        <header> 
+            <div id="titlebar">
+                <img class="icon" src="../svg/menu.svg" id="app-menu">
+                <span class="video-title">ZVP</span>
+            </div>
+            <div id="open-playlist"><img src="../svg/sidebar-open.svg"></div>
+            <div id="control-box">
+                    <div class="button" id="min-button">&#xE921;</div>
+                    <div class="button" id="max-button">&#xE922;</div>
+                    <div class="button" id="restore-button">&#xE923;</div>
+                    <div class="button" id="close-button">&#xE8BB;</div>
+            </div>     
+        </header>
+        <div id="main-content"> 
+                <div id="media-player">
+                    <video id="media-video" src="" autoplay poster="../assets/zizaposter.png">
+                         <source type="video/mp4">   
+                    </video> 
+                    <div id="video-controls">
+                        <button  id="play-pause" class="disabled">
+                            <img  id="pp-icon" class="icon" src="../svg/play.svg">
+                        </button>
+
+                        <span id="timer">-:-</span>
+                        <span id="seperator">/</span>
+                        <span id="duration">-:-</span>
+
+                        <div id="progress-bar">
+                            <div id="progress"></div>
+                            <span id="buffered-amount"></span>
+                        </div> 
+                        
+                        <button id="mute" class="disabled">
+                                <img id="mute-icon" class="icon" src="../svg/volume-medium.svg"> 
+                        </button> 
+
+                        <input class="volume" type="range" min="0" max="1" step="0.05" value="1" id="volume">
+
+                        <button id="full-screen" class="disabled">
+                                <img  id="fs-icon" class="icon" src="../svg/fullscreen.svg"> 
+                        </button>
+                         <button id="snapshot" class="disabled">
+                             <img id="camera-icon" class="icon" src="../svg/camera.svg">
+                         </button>
+                    </div>   
+
+                    <div id="videoList">
+                        <div class="playlist-header">
+                            <div class="folder-name" title="Delete All">
+                                <img src="../svg/bin2.svg">
+                            </div>
+                            <div class="list-title"></div>
+                            <div class="x-close"><a>&#xE8BB;</a></div>                           
+                        </div>
+                        <div id="list-container">
+                            <ul id="video-list"></ul>
+                        </div>                       
+                        <div class="playlist-info">
+                            <img src="../svg/folder-open.svg">
+                            <span></span>
+                        </div>
+                        <div class="drag-files-here">
+                                <div class="drag-parags">
+                                    <p>Drag & Drop</p>
+                                    <p>Video Files Here</p>
+                                </div>
+                        </div>
+                    <!-- Confirmation dialog -->
+                        <div class="overlay">
+                            <div id="confirmDialog">
+                                <header id="dragzone">Delete</header>
+                                <div id="dialog-body"><p data-modal-text></p></div>
+                                <div id="dialog-footer">
+                                    <button data-close-modal>Yes</button>
+                                    <button data-cancel-modal>No</button>
+                                </div>
+                            </div>
+                        </div> 
+                        <!-- end of confirmDialog -->
+                    </div>  
+                </div> 
+                <div id="menuDiv">
+                    <!-- <span>Open File</span> -->
+                    <span>Open Files</span>
+                    <span>Playlist</span>
+                    <span class="disabled" id="menu-fs">Fullscreen</span>
+                    <span class="disabled" id="menu-snap">Save Snapshot</span>
+                    <span class="seperator"></span>
+                    <span>About</span>
+                    <span class="seperator"></span>
+                    <span>Exit</span>
+                </div>                                                     
+        </div> 
+         <div id="video-info">
+            <div>
+             <div id="file-name">Ready</div>
+            </div>       
+             <div id="events">
+                 <div id="goto" title="Navigate video to (minutes)">
+                     <input id="go-input" title="type duration here" />
+                     </input><button id="btn-go" disabled>Go</button>
+                 </div>
+                 <div id="folder" style="display: none">
+                     <input id="open-folder" style="display: none" type="file" multiple accept="video/mp4" />
+                 </div>
+                 <!-- <div id="snapshot" class="disabled">
+                     <img id="camera-icon" class="icon" src="../svg/camera.svg">
+                 </div> -->
+                 <div id="load-video" style="display: none">
+                     <!-- <img class="icon" src="../svg/film.svg"> -->
+                     <input style="display: none" type="file" id="file-to-upload" accept="video/mp4" />
+                 </div>
+             </div> 
+         </div>  
+         <div class="about-overlay">
+            <div id="about-dialog">
+                <div id="dialog-heaeder">
+                    <span>Ziza Video Player</span>
+                    <button class="btn-close-dialodg">&#xE8BB;</button>
+                </div>
+                <div class="dialog-body">
+                    <img class="icon" src="../assets/icons/icon.png">
+                    <div>
+                        <div class="appName">Ziza Video Player</div>
+                        <p>Version 1.0.0</p>
+                        <p  class="copyright">2023 &copy; Joseph A. Ore</p>
+                    </div>
+                </div>
+                <div class="dialog-footer">
+                    <button class="about-btn-ok">Ok</button>
+                </div>
+            </div>
+         </div>    
+    </div>
+    <script src="../src/renderer.js"></script>
+    <script src="../src/media.js"></script>
+</body>
+</html>

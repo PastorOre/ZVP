@@ -1,0 +1,946 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#wrapper {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100%;
+    height: 100vh;
+    background: #000;
+    border: #424242 1px solid;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    background: #424242;
+    align-items: center;
+}
+
+#main-menu{
+    padding: 4px 5px;
+    font-size: 13px;
+    background: #424242;
+    border: none;
+    cursor: pointer;
+}
+
+#main-menu img{
+    width: 18px !important;
+    fill: #5c5b5b;
+}
+
+header #control-box {
+    display: flex;
+    /* flex: 2.5; */
+    flex-direction: row;
+    justify-content: flex-end;
+    -webkit-app-region: drag;
+    background: #424242;
+}
+
+header #titlebar {
+    display: flex;
+    flex: 1;
+    /* background: #424242; */
+    justify-content: flex-start;
+    align-items: center;
+    -webkit-app-region: drag;
+}
+
+header #titlebar span {
+    padding: 4px 5px;
+    /* background: #424242; */
+    color: #a19f9f;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: .75em;
+    white-space: nowrap;
+    /* overflow: hidden; */
+    text-overflow: ellipsis;
+}
+
+header #open-playlist{
+    display: flex;
+    cursor: pointer;
+}
+
+header #open-playlist img{
+    width: 22px;
+    opacity: 0.5;
+}
+
+header #open-playlist img:hover{
+    opacity: 0.75;
+}
+
+header #titlebar img {
+    width: 22px;
+    height: 22px;
+    margin-left: 0.5em;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+header #titlebar img:hover{
+    opacity: 0.75;
+}
+
+header #control-box .button {
+    font-family: "Segoe MDL2 Assets";
+    font-size: 10px;
+    padding: 10px 18px;
+    -webkit-app-region: no-drag;
+    color: white;
+    opacity: .5;
+    user-select: none;
+    cursor: default;
+}
+
+header #control-box #restore-button {
+    display: none;
+}
+
+header #control-box .button:hover {
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+}
+
+#control-box #close-button:hover {
+    background: #E81123;
+}
+
+/* end of header */
+#main-content {
+    align-self: stretch;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+}
+
+#media-player {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#media-video {
+    width: 100%;
+    background: transparent;
+    flex: 9;
+    object-fit: contain;
+}
+
+/* end of video player */
+#video-controls {
+    position: absolute;
+    bottom: 60px;
+    left: 10%;
+    right: 10%;
+    flex-wrap: nowrap;
+    padding: 1px 6px;
+    transition: all .35;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.5);
+    transition: opacity 2000ms ease-in-out;
+}
+
+#progress-bar {
+    flex: 30%;
+    display: flex;
+    height: 6px;
+    transition: height 0.3s;
+    background: #424242;
+    border-radius: 4px;
+    margin: 0px 5px;
+    cursor: pointer;
+}
+
+#progress {
+    width: 0%;
+    height: 6px;
+    background: #C4EE57;
+    flex: 0;
+    flex-basis: 0%;
+    border-radius: 4px;
+}
+
+video::-webkit-media-controls {
+    display: none !important;
+}
+
+video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+
+#video-controls button img {
+    width: 26px;
+    height: 26px;
+    opacity: 1;
+    background: transparent;
+}
+
+#video-controls button img:hover {
+    opacity: 0.6;
+}
+
+#video-controls span {
+    user-select: none;
+    color: #eeeeee;
+    font-family: sans-serif;
+    font-style: normal;
+    font-size: 0.8em;
+    opacity: 1;
+    margin-right: 5px;
+}
+
+#video-controls #duration {
+    opacity: 0.5;
+}
+
+#video-controls #seperator {
+    margin-right: 4px;
+    font-size: 1.2em;
+    margin-top: -1px;
+    opacity: 0.5;
+}
+
+#video-controls button {
+    cursor: pointer;
+    margin-left: 5px;
+    background: transparent;
+    border: none;
+    user-select: none;
+}
+
+#video-controls button:focus {
+    outline: none;
+}
+
+#video-controls button:first-child {
+    margin-left: 0px;
+}
+
+input[type='range'] {
+    width: 160px;
+    height: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    background: transparent;
+}
+
+input[type='range'],
+input[type='range']::-webkit-slider-runnable-track,
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+    width: 160px;
+    height: 6px;
+    background: #424242;
+    border-radius: 5px;
+}
+
+input[type='range']::-webkit-slider-thumb {
+    position: relative;
+    height: 12px;
+    width: 12px;
+    margin-top: -3px;
+    background: #C4EE57;
+    border-radius: 50%;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+#video-controls input[type=range] {
+    width: 0px;
+    transition: 0.5s;
+}
+
+/* end of media control */
+
+#video-info {
+    display: flex;
+    width: 100%;
+    padding: 0.15em;
+    background: #424242;
+    align-items: center;
+    color: #a19f9f;
+    font-family: sans-serif;
+    font-size: 0.8em;
+    user-select: none;
+    padding: 0.25em 0.5em;
+}
+
+#video-info div:first-child{
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+/* #video-info img {
+    width: 22px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+#video-info img:hover {
+    opacity: 0.75;
+} */
+
+#video-info #file-name {
+    padding-left: 0.5em;
+    user-select: none;
+}
+
+#video-info #events {
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    user-select: none;
+}
+
+#video-info #events img {
+    width: 24px;
+    opacity: 0.5;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+#video-info #events img:hover {
+    opacity: 0.8;
+}
+
+#file-to-upload {
+    display: none;
+}
+
+#snapshot img {
+    margin-top: 1px;
+    margin-right: 5px;
+}
+
+/* end of video events buttons */
+.media-div {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 80000;
+}
+
+/* end of media -div, for fullscreen */
+#videoList {
+    box-sizing: border-box;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    width: 0;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    overflow-x: hidden;
+    transition: 0.5s;
+    background: #383838;
+    z-index: 2000;
+    user-select: none;
+    box-shadow: 5px 0 7px -6px black;
+    /* border-right: #302d2d 2px solid; */
+}
+
+#videoList .playlist-header {
+    box-sizing: border-box;
+    height: 32px;
+    width: 100%;
+    text-align: right;
+    background: #2c2c2c;
+    user-select: none;
+    display: flex;
+    -webkit-app-region: no-drag;
+    align-items: center;
+}
+
+.folder-name{
+    display: none;
+    background-color: transparent;
+    border-radius: 3px;
+    padding: 5px;
+    color: #747373;
+    border: none;
+    padding-left: 1em;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-family: system-ui;
+}
+
+.folder-name img{
+    padding-top: 2px;
+}
+
+.folder-name:hover{
+    color: #fff;
+}
+
+.folder-name:focus{
+    outline: none;
+}
+
+.list-title{
+    flex: 1;
+}
+
+.playlist-header .x-close {
+    cursor: pointer;
+    color: #747373;
+    /* flex-basis: 15%; */
+    -webkit-app-region: no-drag;
+    padding: 11px;
+    font-family: "Segoe MDL2 Assets";
+    font-size: 0.6em; 
+}
+
+.playlist-header .x-close:hover {
+    color: #ffffff;
+}
+
+/*====== playlist container section ========*/
+
+#list-container {
+    height: calc(100% - 62px);
+    overflow-y: scroll;
+}
+
+#video-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 0.2em;
+    padding: 12px;
+    list-style: none;
+    color: #a19f9f;
+}
+
+#list-container::-webkit-scrollbar {
+    width: 6px;
+    height: 1px;
+}
+
+#list-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#list-container::-webkit-scrollbar-thumb {
+    background: #757474;
+    -webkit-appearance: none;
+}
+
+#list-container::-webkit-scrollbar-thumb:hover {
+    background: #929090;
+}
+
+#list-container::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/*====== video cards in playlist section =======*/
+
+#video-list li {
+    position: relative;
+    border: 0.1em solid #2c2c2c;
+    justify-items: right;
+}
+
+#video-list li .video-duration {
+    position: absolute;
+    width: 100%;
+    padding: 2px 5px;
+    /* border-radius: 10px; */
+    font-family: sans-serif;
+    font-style: normal;
+    font-size: 0.7em;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    z-index: 200;
+    bottom: 0;
+    /* right: 4px; */
+    opacity: 0.9;
+}
+
+#video-list li .video-duration::before {
+    content: "\25B6";
+    display: inline-block;
+    margin-right: 2px;
+}
+
+#video-list li img {
+    max-width: 100%;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+}
+
+#video-list li img:hover {
+    opacity: 0.6;
+}
+
+#video-list li.active {
+    border: 2px solid #C4EE57;
+}
+
+#video-list li img.dragElem {
+    opacity: 0.5;
+}
+
+#video-list li.dragElem {
+    opacity: 0.5;
+}
+
+/* video list with thumnbails ends here*/
+/* #video-list li.over {
+        border: 2px dashed orange;
+      } */
+
+#video-list li:before {
+    /* content: "\25B6"; */
+    color: #a19f9f;
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 0.8em;
+}
+
+#video-list li.playing:before {
+    /* content: "\25B6"; */
+    color: orange;
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 0.8em;
+}
+
+#video-list li:hover {
+    color: #eeeeee;
+}
+
+#video-list li.active {
+    color: #C4EE57;
+}
+
+#video-list li.over {
+    border: 0.1em dashed orange;
+}
+
+/* video list with list ends here*/
+.playlist-info {
+    position: absolute;
+    height: 33px;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    background: #424242;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    border-top: 1px solid #302d2d;
+}
+
+.playlist-info img{
+    width: 18px;
+    opacity: 0.5;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+#videoList .playlist-info span {
+    width: 100%;
+    background: transparent;
+    font-size: 0.75em;
+    color: #a19f9f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: sans-serif;
+    margin-left: 6px;
+}
+
+/* end of video list in playlist */
+.drag-files-here {
+    position: absolute;
+    width: auto;
+    height: auto;
+    left: 15%;
+    top: 30%;
+    right: 15%;
+    padding: 25px 15px;
+    text-align: center;
+    border-radius: 5px;
+    color: #5c5b5b;
+
+}
+
+.drag-files-here div{
+    display: block;
+}
+
+.drag-files-here p {
+    margin: auto;
+    font-weight: bold;
+    font-family: sans-serif;
+    font-size: 1.6em;
+}
+
+.drag-files-here p:last-child {
+    font-size: 0.8em;
+    padding-top: 5px;
+    font-weight: normal
+}
+
+/*===== end of playlist info and list drag and drop =====*/
+
+/*===== main menu section =====*/
+#menuDiv {
+    position: absolute;
+    height: auto;
+    display: none;
+    flex-direction: column;
+    left: 0;
+    top: 0;
+    background: #383838;
+    z-index: 200;
+    padding: 0;
+    padding: 0.8em  0em;
+    border: #5e5d5d solid 0.05em;
+    border-radius: 0.4em;
+}
+
+#menuDiv span {
+    display: flex;
+    width: 16em;
+    padding: 0.5em 1.5em;
+    font-family: sans-serif;
+    font-size: 0.85em;
+    cursor: pointer;
+    border-left: none;
+    color: #919090;
+    box-sizing: border-box;
+}
+
+
+#menuDiv :nth-child(1)::after{
+  content: 'Ctrl+O';
+  flex: 1;
+  text-align: end;
+}
+
+#menuDiv :nth-child(4)::after{
+    content: 'Ctrl+Shift+S';
+    flex: 1;
+    text-align: end;
+}
+
+#menuDiv span:hover {
+    background: #5e5d5d;
+    color: #131212
+}
+
+#menuDiv .seperator {
+    height: 0.1em;
+    background: #535353;
+    padding: 0px;
+}
+
+#app-menu div {
+    width: auto;
+    padding: 3px 5px;
+    cursor: pointer;
+    border: #2c2c2c 1px solid;
+    border-radius: 2px;
+    display: flex;
+    font-size: .85em;
+}
+
+#app-menu div:hover {
+    background: #727171;
+    color: #2c2c2c;
+}
+
+/*=== end of menu section ====*/
+
+#goto {
+    display: flex;
+    border: #2c2c2c 1px solid;
+    border-radius: 2px;
+    margin-right: 5px;
+    font-size: .85em;
+}
+#goto button:hover {
+    background: #727171;
+    color: #2c2c2c;
+}
+
+#goto button {
+    border: none;
+    padding: 0px 6px;
+    cursor: pointer;
+    background: transparent;
+    color: #a19f9f;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+#go-input{
+    width: 4em;
+    border: none;
+    padding: 2px 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    color:#fff;
+}
+
+#go-input:focus,
+#goto button:focus {
+    outline: none;
+}
+
+/*======= Recent playlist section =========*/
+.btn-clear-list{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-clear-list img,
+.recent-file img{
+    width: 100%;
+}
+
+/*====== Dragging video in recent playlist section ============*/
+
+.dragging{
+    opacity: 0.2;
+    border:#fff solid 0.5em;
+    cursor: move;
+}
+
+/*====== Confirm dialog section ===========*/
+
+#confirmDialog {
+    position: absolute;
+    width: 70%;
+    max-width: 70%;
+    display: block;
+    /* left: 15%;
+    top: 25%; */
+    border-radius: 5px;
+    border: 0.05em solid #bababa;
+    background-color: #f5f5f5;
+    z-index: 999;
+    box-shadow: 2px 4px 18px rgba(0, 0, 0, 0.2);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.overlay {
+    display: none;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    margin: auto;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 998;
+}
+
+#dragzone {
+    cursor: move;
+    z-index: 100;
+    padding: 0.2em 0.5em;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: #4e4e4e;
+    color: #f5f5f5;
+    font-size: 0.85em;
+    font-weight: 400;
+    font-family: system-ui;
+}
+
+#dialog-body{
+    padding: 0.8em 1.2em;
+    box-sizing: border-box;
+    font-size: 0.85em;
+    margin-top: 1em;
+    line-height: 1.15;
+    user-select: none;
+    font-family: system-ui;
+}
+
+#dialog-footer{
+    padding: 0.5em;
+    text-align: right;
+}
+
+#dialog-footer button{
+    border: 0.05em solid #ccc;
+    border-radius: 3px;
+    padding: 0.3em 1.5em;
+    font-size: 0.8em;
+/*    text-align: center;*/
+}
+
+#dialog-footer button:hover{
+    background-color: #ccc;
+}
+
+#dialog-footer button:focus{
+    outline: none;
+}
+
+/*============== Dialog Shake Effect ==================*/
+@keyframes shake {
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%, 80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%, 50%, 70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%, 60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+.apply-shake {
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* ZVP about dialog section */
+.about-overlay{
+    display: none;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    margin: auto;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 998;
+}
+
+.show-about{
+    display: flex;
+}
+
+#about-dialog{
+    position: absolute;
+    display: block;
+    background-color: #f5f5f5;
+    border-radius: 0.5em;
+    font-family: system-ui;
+    border: 0.05em solid #bababa;
+    z-index: 999;
+}
+
+#dialog-heaeder{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    background-color: #4e4e4e;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 0.5em;
+    cursor: move;
+    font-size: 0.8em;
+    margin-bottom: 1em;
+    align-items: center;
+    /* justify-items: center; */
+    /* border-top-left-radius: 0.4em;
+    border-top-right-radius: 0.4em; */
+}
+
+#dialog-heaeder button{
+    font-family: "Segoe MDL2 Assets";
+    font-size: 0.75em;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 0.5em;
+}
+
+#dialog-heaeder button:hover{
+    color: rgba(255, 255, 255, 0.75);
+    background-color: #666;
+    border-radius: 0.4em;
+}
+
+.dialog-body{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 1em;
+    padding: 1em 1.5em;
+}
+
+.dialog-body img{
+    width: 4em;
+}
+
+.appName{
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.copyright{
+    font-size: 0.8em;
+}
+
+.dialog-footer{
+    text-align: right;
+    padding: 0.5em;
+}
+
+.dialog-footer button{
+    padding: 0.25em 2em;
+    border: 0.05em solid #ccc;
+    border-radius: 0.25em;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.dialog-footer button:hover{
+    background-color: #ccc;
+}
+
+.dialog-footer button:focus{
+    outline: none;
+}
