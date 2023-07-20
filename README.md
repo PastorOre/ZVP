@@ -1,2 +1,2 @@
 ## ZVP
-ZVP (Ziza Video Player) is a simple video player with playlist and ability to arrange videos in the order you would like to play them. You can also take frame shots to extract images from playing video.
+ZVP (Ziza Video Player) is a simple video player with playlist and ability to arrange videos in the order you would like to play them. You can also take frame shots to extract images from playing video. ZVP gives you a way to pause and resume playback at any given time, even if the application is closed.
