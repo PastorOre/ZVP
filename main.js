@@ -69,26 +69,3 @@ app.on('window-all-closed', () => {
 
 ipc.on('exit', () => {app.quit();});
 
-ipc.on('open-about-dialog', (event) => {
-    openAbout();
-})
-
-function openAbout(){
-    const aboutpath = path.join('file://', __dirname, 'views/about.html')
-    let about = new BrowserWindow({
-        frame:false,
-        parent:win,
-        modal:true,
-        width:400, 
-        height:180,
-        show:false,
-        resizable:false,
-        backgroundColor: '#424242'
-    })
-    about.on('closed', () => { about = null})
-    about.loadURL(aboutpath) 
-
-    about.once('ready-to-show', () => {
-        about.show();
-    });
-}

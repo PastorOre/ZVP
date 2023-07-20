@@ -87,13 +87,6 @@ const homedir = require('os').homedir();
     ]);
     const ctxMenu = remote.Menu.buildFromTemplate([
         {
-            label: 'Open File...',
-            accelerator: 'CmdOrCtrl+O',
-            click: () => {
-                openVideoFile()
-             },
-        },
-        {
             label: 'Open Files...',
             click: () => {
                 openFolder();
@@ -198,12 +191,6 @@ const homedir = require('os').homedir();
         }
     ])
 // end of variables-------------------//
-    function openVideoFile(){
-        openFile.click();
-    }
-    function loadVideo(event){
-        selectFiles(event)
-    }
     function playPuase(){
         if(video.src == "")
         {
@@ -219,6 +206,10 @@ const homedir = require('os').homedir();
                 playPuaseBtn.innerHTML =  playicon;
                 playPuaseBtn.title = "Play";
                 playerStatus.textContent = "Paused";
+
+                // save current video format and current time lapse
+                let title = videoTitle.textContent.substring(0, videoTitle.textContent.lastIndexOf('-'));
+                 saveCurrentVideo(video.src, title, format(video.currentTime)) 
               }
         }
     }
@@ -299,7 +290,7 @@ const homedir = require('os').homedir();
             playPuaseBtn.innerHTML = playicon;
             vdTimer.innerHTML = "--";
             vdDuration.innerHTML = "--";   
-            playerStatus.textContent = "Ready";       
+            playerStatus.textContent = "Ready";   
         }
         }catch(e){
             console.log(e.message);
@@ -404,31 +395,31 @@ const homedir = require('os').homedir();
     function toggleFullScreenCM(){
         var isFullscreen = document.webkitFullscreenElement !== null;
         if (!isFullscreen){
-            ctxMenu.items[8].visible = true;
-            ctxMenu.items[9].visible = false;
-        }else{
-            ctxMenu.items[9].visible = true;
+            ctxMenu.items[7].visible = true;
             ctxMenu.items[8].visible = false;
+        }else{
+            ctxMenu.items[8].visible = true;
+            ctxMenu.items[7].visible = false;
         }
      }
 
     function togglePlayCM(){
         if(video.paused){
-            ctxMenu.items[3].visible = true;
-            ctxMenu.items[4].visible = false;
-        }else{
-            ctxMenu.items[4].visible = true;
+            ctxMenu.items[2].visible = true;
             ctxMenu.items[3].visible = false;
+        }else{
+            ctxMenu.items[3].visible = true;
+            ctxMenu.items[2].visible = false;
         }
      }
 
     function togglemutecM(){
          if(video.muted){
-            ctxMenu.items[6].visible = true;
-            ctxMenu.items[5].visible = false;
-         }else{
             ctxMenu.items[5].visible = true;
-            ctxMenu.items[6].visible = false;
+            ctxMenu.items[4].visible = false;
+         }else{
+            ctxMenu.items[4].visible = true;
+            ctxMenu.items[5].visible = false;
          }
      }
 
@@ -508,7 +499,6 @@ const homedir = require('os').homedir();
         if (foldername.indexOf('\\') === 0 || foldername.indexOf('/') === 0) {
             foldername = foldername.substring(1);
         }
-        // currentFolder.innerHTML = foldername;
     }
 
     function doImgClick(event){
@@ -588,7 +578,6 @@ const homedir = require('os').homedir();
             srcvideo.preload = 'metadata';
             srcvideo.src = url;  
          closeNav();
-        // btnOpenFolder.setAttribute('title', 'Change folder');
        
     }
 
@@ -639,7 +628,15 @@ const homedir = require('os').homedir();
        hideMenu();
     var cols = document.querySelectorAll("li");
     [].forEach.call(cols, addDnDHandlers);
+        
+        //========== select current video in the playlist
+        cols.forEach((col) => { 
+            let path = col.getAttribute("url");
+            if(video.src == path)
+                col.classList.add("active");
+        });
     }
+
     function closeNav() {
         videosList.style.width = "0";
         menu.style.display = 'none';
@@ -674,7 +671,6 @@ const homedir = require('os').homedir();
                     break;
                     case 'About':
                         showAboutDialog();
-                        // openAbout();
                     break;
                     case 'Exit':
                         ipc.send('exit');
@@ -703,7 +699,6 @@ const homedir = require('os').homedir();
 
     function isPlaying(){
         try{
-    //    amp.amplifyMedia(video, 2);
        vdDuration.innerHTML = format(video.duration);
         } catch(e){
            console.log(e.message);
@@ -728,12 +723,11 @@ const homedir = require('os').homedir();
         }
        openAppMenu();
     }
+
     function hideMenu(){
         menu.style.display = 'none';
     }
-    function openAbout(){
-        ipc.send('open-about-dialog');
-    }
+
     function playNextItem(){
         current = document.querySelector('li.active');  
         if(index !== (videolist.length - 1)){ 
@@ -757,6 +751,7 @@ const homedir = require('os').homedir();
             atLastItemOnPlaylist();
         }
     }
+
     function atLastItemOnPlaylist(){
         video.pause();
         video.currentTime = 0;
@@ -764,24 +759,25 @@ const homedir = require('os').homedir();
         vdTimer.innerHTML = "--";
         vdDuration.innerHTML = "--";
     }
+
     function enablingElements(){
-        if(video.getAttribute('src') !== ""){
-            ctxMenu.items[3].enabled = true;
-            ctxMenu.items[5].enabled = true;
+        if(video.src.includes(".mp4")){
+            ctxMenu.items[2].enabled = true;
+            ctxMenu.items[4].enabled = true;
+            ctxMenu.items[6].enabled = true;
             ctxMenu.items[7].enabled = true;
             ctxMenu.items[8].enabled = true;
-            ctxMenu.items[9].enabled = true;
+            ctxMenu.items[11].enabled = true;
             ctxMenu.items[12].enabled = true;
-            ctxMenu.items[13].enabled = true;
             enabledCtrlButtons();
         }else{
-            ctxMenu.items[3].enabled = false;
-            ctxMenu.items[5].enabled = false;
+            ctxMenu.items[2].enabled = false;
+            ctxMenu.items[4].enabled = false;
+            ctxMenu.items[6].enabled = false;
             ctxMenu.items[7].enabled = false;
             ctxMenu.items[8].enabled = false;
-            ctxMenu.items[9].enabled = false;
+            ctxMenu.items[11].enabled = false;
             ctxMenu.items[12].enabled = false;
-            ctxMenu.items[13].enabled = false;
         }
     }
     function enabledCtrlButtons(){
@@ -794,19 +790,6 @@ const homedir = require('os').homedir();
         muteBtn.classList.remove('disabled');
         // document.querySelector('.folder-name img').style. visibility = 'visible';
     }
-    // function removeListItem(){
-    //     var current = document.querySelector('li.active');
-    //     var active = videolist.indexOf(current);
-    //     var x = videolist[listindex]
-    //     var a = videolist[active]
-    //     if(a == x){
-    //         alert('Cannot remove from list. Video is currently playing...');
-    //         return;
-    //     }else{
-    //        x.parentNode.removeChild(x);
-    //         videolist.splice(x, 1);
-    //     }
-    // }
 
     function openVideoInFolder(){
         var x = videolist[listindex]
@@ -977,14 +960,6 @@ const homedir = require('os').homedir();
         }
     }
 
-    
-    function hotkeyHandler({key, ctrlKey=null, altKey=null, shiftKey=null, preventDefault=false, callback=() => {}, element=document}) {
-        element.addEventListener('keydown', ev => {
-           // ...
-        })
-    }
-
-
     function shortCut() {
         document.addEventListener('keydown', (evt) => {
             evt.preventDefault();
@@ -1136,9 +1111,38 @@ const homedir = require('os').homedir();
         dragzone.onmousedown = dragMouseDown;
     };
 
+    function saveCurrentVideo(path, title, time){
+        let obj = {
+            path: path,
+            title: title,
+            time: time
+        }
+
+        const json = JSON.stringify(obj);
+        localStorage.setItem("currentVideo", json);
+    }
+
+    function getlastVideo(){
+        let lastVideo = localStorage.getItem("currentVideo");
+        let json = JSON.parse(lastVideo)
+        if(json){
+            video.src = json.path;
+            goToVideoTime(parseFloat(json.time)); 
+                videoTitle.textContent = `${json.title} - ZVP`
+                closeNav(); 
+                playPuase(); 
+                hideMenu(); 
+                enablingElements();           
+        }
+    }
+
+    function ResumeLastVideo(){
+       document.getElementById('btn-continue').addEventListener("click", () => {
+        getlastVideo();
+       })  
+    }
+
 //========= EventListener handlers =============
-    openBtn.onclick = openVideoFile;
-    openFile.onchange = loadVideo;
     openFolderInput.onchange = selectFiles;
     openFolderBtn.onclick = openFolder;
     playPuaseBtn.onclick = playPuase;
@@ -1189,8 +1193,15 @@ const homedir = require('os').homedir();
         showModal(modal);
     });
 
+    aboutOverlay.addEventListener('click', () => {
+        aboutDialog.classList.add('apply-shake');
+            setTimeout(() => {
+                aboutDialog.classList.remove('apply-shake');
+            }, 1000);
+    });
+
 //========== Button tooltips ===================
-    openBtn.title = "Open Video File";
+    // openBtn.title = "Open Video File";
     snapshotBtn.title = "Take Snapshot";
     muteBtn.title = "Mute";
     playPuaseBtn.title = "Play";
@@ -1206,5 +1217,6 @@ const homedir = require('os').homedir();
     getVideoDetails();
 
     shortCut();
+    ResumeLastVideo();
 
 })();

@@ -298,6 +298,8 @@ input[type=range]:focus {
     flex: 1;
 }
 
+
+
 /* #video-info img {
     width: 22px;
     opacity: 0.5;
@@ -691,21 +693,33 @@ input[type=range]:focus {
 
 /*=== end of menu section ====*/
 
+#btn-continue{
+    border: none;
+    padding: 2px 6px;
+    cursor: pointer;
+    background: transparent;
+    color: #a19f9f;
+    border-radius: 2px;
+}
+
+.continue-last-video,
 #goto {
     display: flex;
     border: #2c2c2c 1px solid;
     border-radius: 2px;
     margin-right: 5px;
-    font-size: .85em;
+    font-size: .7em;
 }
+
+#btn-continue:hover,
 #goto button:hover {
     background: #727171;
-    color: #2c2c2c;
+    color: #222222;
 }
 
 #goto button {
     border: none;
-    padding: 0px 6px;
+    padding: 2px 6px;
     cursor: pointer;
     background: transparent;
     color: #a19f9f;
@@ -722,6 +736,7 @@ input[type=range]:focus {
     color:#fff;
 }
 
+#btn-continue:focus,
 #go-input:focus,
 #goto button:focus {
     outline: none;

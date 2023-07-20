@@ -102,23 +102,16 @@
                 </div>                                                     
         </div> 
          <div id="video-info">
-            <div>
+            <!-- <div> -->
              <div id="file-name">Ready</div>
-            </div>       
+            <!-- </div>        -->
+            <div class="continue-last-video" title="Continue with last video">
+                <button id="btn-continue">Resume</button>
+            </div>
              <div id="events">
                  <div id="goto" title="Navigate video to (minutes)">
                      <input id="go-input" title="type duration here" />
                      </input><button id="btn-go" disabled>Go</button>
-                 </div>
-                 <div id="folder" style="display: none">
-                     <input id="open-folder" style="display: none" type="file" multiple accept="video/mp4" />
-                 </div>
-                 <!-- <div id="snapshot" class="disabled">
-                     <img id="camera-icon" class="icon" src="../svg/camera.svg">
-                 </div> -->
-                 <div id="load-video" style="display: none">
-                     <!-- <img class="icon" src="../svg/film.svg"> -->
-                     <input style="display: none" type="file" id="file-to-upload" accept="video/mp4" />
                  </div>
              </div> 
          </div>  
@@ -140,7 +133,11 @@
                     <button class="about-btn-ok">Ok</button>
                 </div>
             </div>
-         </div>    
+         </div> 
+         <!-- file open control, hiddend input types    -->
+         <div id="folder" style="display: none">
+            <input id="open-folder" style="display: none" type="file" multiple accept="video/mp4" />
+        </div>
     </div>
     <script src="../src/renderer.js"></script>
     <script src="../src/media.js"></script>
