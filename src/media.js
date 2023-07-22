@@ -447,6 +447,7 @@ const homedir = require('os').homedir();
             }
             videolist = [];
             createThumbnail(file); 
+            enabledCtrlButtons();
             copyVideo(file)   // copy video to app directory  
                                 
         var directory = path.dirname(files[0].path);
@@ -516,6 +517,7 @@ const homedir = require('os').homedir();
         videoTitle.textContent = `${el.title} - ZVP`
         closeNav();
         playPuase();
+        // enablingElements();
     }
 
     function createThumbnail(file){        
@@ -582,7 +584,6 @@ const homedir = require('os').homedir();
             srcvideo.preload = 'metadata';
             srcvideo.src = url;  
          closeNav();
-       
     }
 
     function windowMouseMove(e){
@@ -754,7 +755,7 @@ const homedir = require('os').homedir();
     }
 
     function enablingElements(){
-        if(video.src.includes(".mp4")){
+        if(video.src.includes("mp4")){
             ctxMenu.items[2].enabled = true;
             ctxMenu.items[4].enabled = true;
             ctxMenu.items[6].enabled = true;
@@ -923,42 +924,6 @@ const homedir = require('os').homedir();
     
     }
 
-    function shortCut() {
-        document.addEventListener('keydown', (evt) => {
-            // evt.preventDefault();
-            if(evt.ctrlKey){
-                switch(evt.key){
-                    case 'o':
-                        openFolder();
-                    break;
-                }
-            }
-            switch(evt.key){
-                case 'ArrowLeft':
-                    video.currentTime -= 3 * 60; 
-                break;
-                case 'ArrowRight':
-                    video.currentTime += 3 * 60; 
-                break;
-                case 'Enter':
-                    if(evt.target == numb){
-                        goToVideoTime(numb.value);
-                        // numb.value = '';
-                    }else{
-                        playPuase();
-                    }
-                break;
-                case 'Escape':
-                    exitFullscreen();
-                break;
-                case ' ':
-                    playPuase();
-                break;
-            }
-
-          
-        })
-    }
 //====== Dragging items in video  playlist =============
     function handleDragStart(e) {
     // Target (this) element is the source node.
@@ -1056,61 +1021,6 @@ const homedir = require('os').homedir();
         elem.style.display = 'flex';
     }
 
-    //========= Dragable Div Function ==========
-    // function dragElement(element, dragzone){
-    //     let pos1 = 0,
-    //         pos2 = 0,
-    //         pos3 = 0,
-    //         pos4 = 0;
-    //     //MouseUp occurs when the user releases the mouse button
-    //     const dragMouseUp = () => {
-    //         document.onmouseup = null;
-    //         //onmousemove attribute fires when the pointer is moving while it is over an element.
-    //         document.onmousemove = null;
-
-    //         element.classList.remove("drag");
-    //     };
-
-    //     const dragMouseMove = (event) => {
-
-    //         event.preventDefault();
-    //         //clientX property returns the horizontal coordinate of the mouse pointer
-    //         pos1 = pos3 - event.clientX;
-    //         //clientY property returns the vertical coordinate of the mouse pointer
-    //         pos2 = pos4 - event.clientY;
-    //         pos3 = event.clientX;
-    //         pos4 = event.clientY;
-    //         //offsetTop property returns the top position relative to the parent
-    //         element.style.top = `${element.offsetTop - pos2}px`;
-    //         element.style.left = `${element.offsetLeft - pos1}px`;
-    //     };
-
-    //     const dragMouseDown = (event) => {
-    //         event.preventDefault();
-
-    //         pos3 = event.clientX;
-    //         pos4 = event.clientY;
-
-    //         element.classList.add("drag");
-
-    //         document.onmouseup = dragMouseUp;
-    //         document.onmousemove = dragMouseMove;
-    //     };
-
-    //     dragzone.onmousedown = dragMouseDown;
-    // };
-
-    // function saveCurrentVideo(path, title, time){
-    //     let obj = {
-    //         path: path,
-    //         title: title,
-    //         time: time
-    //     }
-
-    //     const json = JSON.stringify(obj);
-    //     localStorage.setItem("currentVideo", json);
-    // }
-
     function getlastVideo(){
         let lastVideo = localStorage.getItem("currentVideo");
         let json = JSON.parse(lastVideo)
@@ -1153,6 +1063,34 @@ const homedir = require('os').homedir();
         }   
     }
 
+    function windowKeyUp(evt){
+        evt.preventDefault();
+        evt.stopPropagation();
+        switch(evt.key){
+            case ' ': // space
+                playPuase();
+            break;
+            case 'Escape':
+                exitFullscreen();
+            break;
+            case 'ArrowLeft':
+                video.currentTime -= 3 * 60; 
+            break;
+            case 'ArrowRight':
+                video.currentTime += 3 * 60; 
+            break;
+        }
+        if(evt.ctrlKey){
+            switch(evt.key){
+                case 'o':
+                    openFolder();
+                break;
+            }
+        }
+    }
+
+    // function windowKeyUp(evt){
+
 //========= EventListener handlers =============
     openFolderInput.onchange = selectFiles;
     openFolderBtn.onclick = openFolder;
@@ -1177,6 +1115,7 @@ const homedir = require('os').homedir();
     fullscreenBtn.onclick = toggleFullscreen;
     videoDiv.ondrop = dropVideo;
     window.onmousemove = windowMouseMove;
+    window.onkeyup = windowKeyUp;
     videoDiv.ondragover = preventDefault;
     openPlaylist.onclick = openNav;
     closePlaylist.onclick = closeNav;
@@ -1187,8 +1126,10 @@ const homedir = require('os').homedir();
     }, false);
 
     btnGo.addEventListener('click', (evt) => {
-        goToVideoTime(numb.value);
-        // numb.value = "";
+        if(numb.value !== ''){
+            goToVideoTime(numb.value);
+            numb.value = "";
+        }
     });
 
     btnClearList.addEventListener('click', () => {
@@ -1218,7 +1159,7 @@ const homedir = require('os').homedir();
     createPlaylist();
     getVideoDetails();
 
-    shortCut();
+    // shortCut();
     ResumeLastVideo();
     openWith();
 
