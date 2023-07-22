@@ -448,7 +448,6 @@ const homedir = require('os').homedir();
             videolist = [];
             createThumbnail(file); 
             enabledCtrlButtons();
-            copyVideo(file)   // copy video to app directory  
                                 
         var directory = path.dirname(files[0].path);
             folderpath.title = directory;
@@ -462,17 +461,12 @@ const homedir = require('os').homedir();
            [].forEach.call(cols, addDnDHandlers);
     }
 
-    function copyVideo(file){
-        let tempDir = path.join(homedir, "ZVP/playlist/");
-        copyToTempDirectory(file.path, path.join(tempDir, file.name));
-    }
-
     function saveVideoDetails(file, image, duration){
         let tempDir = path.join(homedir, "ZVP/playlist/");
         let playlist = path.join(tempDir, "playlist.json");
         let obj = {
             name: file.name,
-            path:  path.join(tempDir, file.name),
+            path:  file.path,
             image: image,
             duration:duration
             }
@@ -804,9 +798,9 @@ const homedir = require('os').homedir();
         if(fs.existsSync(dir)){
             fs.readdir(dir, function(err, files) {
                 if(err) return
-               if(files.length > 1){
+               if(files.length > 0){
                 fs.readFile(database, "utf8", (err, data) => {
-                    if(data.length > 0){
+                    if(data.length > 2){
                          btnClearList.style.display = 'block';
                          dragPargs.style.display = 'none';        
                     }
@@ -941,12 +935,15 @@ const homedir = require('os').homedir();
     e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
     return false;
     }
+    
     function handleDragEnter(e) {
     // this / e.target is the current hover target.
     }
+
     function handleDragLeave(e) {
     this.classList.remove('over');  // this / e.target is previous target element.
     }
+
     function handleDrop(e) {
     // this/e.target is current target element.
     if (e.stopPropagation) {
@@ -1088,8 +1085,6 @@ const homedir = require('os').homedir();
             }
         }
     }
-
-    // function windowKeyUp(evt){
 
 //========= EventListener handlers =============
     openFolderInput.onchange = selectFiles;

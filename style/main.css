@@ -303,19 +303,13 @@ input[type=range]:focus {
     cursor: pointer;
 }
 
+#open-playlist img{
+    width: 20px;
+}
+
 #open-playlist:hover{
-    opacity: 0.8;
-}
-
-/* #video-info img {
-    width: 22px;
-    opacity: 0.5;
-    cursor: pointer;
-}
-
-#video-info img:hover {
     opacity: 0.75;
-} */
+}
 
 #video-info #file-name {
     padding-left: 0.5em;
