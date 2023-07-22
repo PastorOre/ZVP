@@ -1,5 +1,8 @@
 const electron = require('electron');
 const amp = require('../lib/createAmplifier');
+const {fileUrl, saveCurrentVideo, 
+    createDirectories, copyToTempDirectory} = require('../lib/fileUtil');
+const dragElement = require('../lib/dragable');
 const path = require('path');
 const fs = require('fs');
 const ipc = electron.ipcRenderer;
@@ -191,6 +194,7 @@ const homedir = require('os').homedir();
         }
     ])
 // end of variables-------------------//
+
     function playPuase(){
         if(video.src == "")
         {
@@ -206,13 +210,13 @@ const homedir = require('os').homedir();
                 playPuaseBtn.innerHTML =  playicon;
                 playPuaseBtn.title = "Play";
                 playerStatus.textContent = "Paused";
-
-                // save current video format and current time lapse
+                //======= save current video and current time lapse
                 let title = videoTitle.textContent.substring(0, videoTitle.textContent.lastIndexOf('-'));
                  saveCurrentVideo(video.src, title, format(video.currentTime)) 
               }
         }
     }
+
     function timeDuration(){
         vdTimer.innerHTML = format(video.currentTime)
         vdDuration.innerHTML = format(video.duration)
@@ -435,7 +439,7 @@ const homedir = require('os').homedir();
             playlist.innerHTML = '';
             playPuase();
             clearListInfo();
-          }
+          }      
 
 		for (const file of Array.from(files)) {
             if(['video/mp4'].indexOf(file.type) == -1) {
@@ -443,7 +447,7 @@ const homedir = require('os').homedir();
             }
             videolist = [];
             createThumbnail(file); 
-            copyVideo(file)   // copy video to app directory 
+            copyVideo(file)   // copy video to app directory  
                                 
         var directory = path.dirname(files[0].path);
             folderpath.title = directory;
@@ -593,18 +597,7 @@ const homedir = require('os').homedir();
         myStopFunction();
         myFunction();
     }
-    function windowMouseKeyup(event){
-        switch(event.keyCode){
-            case 13: // enter
-            case 32: // space
-            case 19: // pause/break
-            playPuase();
-            break;
-            case 27:
-                exitFullscreen();
-            break;
-        }
-    }
+
     function windowContextMenu(event){
         event.preventDefault();
         togglePlayCM();
@@ -802,26 +795,6 @@ const homedir = require('os').homedir();
     function goToVideoTime(time) {
         video.currentTime = time * 60;
     }
-   
-    function fileUrl(str) {
-        if (typeof str !== 'string') {
-            throw new Error('Expected a string');
-        }
-        let pathName = path.resolve(str).replace(/\\/g, '/');
-        // Windows drive letter must be prefixed with a slash
-        if (pathName[0] !== '/') {
-            pathName = '/' + pathName;
-        }
-    
-        return encodeURI('file://' + pathName);
-    }
-
-    function createDirectories(dir){
-        let appDir = path.join(homedir, dir);
-        if (!fs.existsSync(appDir)){
-            fs.mkdirSync(appDir, { recursive: true });
-        }
-    }
 
     function getVideoDetails(){
         try{
@@ -853,7 +826,7 @@ const homedir = require('os').homedir();
                         folder = folder.substring(folder.lastIndexOf('\\') + 1);
                         folderpath.title = dir ;
                         folderpath.innerHTML = "Playlist";;
-        
+
                         list.addEventListener('click', (evt) =>{
                             let url = list.getAttribute('url');
                             let current = document.querySelector('li.active'); 
@@ -950,19 +923,9 @@ const homedir = require('os').homedir();
     
     }
 
-    function copyToTempDirectory(frompath, topath){
-        try{
-            if(fs.existsSync(frompath)) {
-                fs.createReadStream(frompath).pipe(fs.createWriteStream(topath));
-            }
-        }catch(e){
-            alert(e.message);
-        }
-    }
-
     function shortCut() {
         document.addEventListener('keydown', (evt) => {
-            evt.preventDefault();
+            // evt.preventDefault();
             if(evt.ctrlKey){
                 switch(evt.key){
                     case 'o':
@@ -970,6 +933,30 @@ const homedir = require('os').homedir();
                     break;
                 }
             }
+            switch(evt.key){
+                case 'ArrowLeft':
+                    video.currentTime -= 3 * 60; 
+                break;
+                case 'ArrowRight':
+                    video.currentTime += 3 * 60; 
+                break;
+                case 'Enter':
+                    if(evt.target == numb){
+                        goToVideoTime(numb.value);
+                        // numb.value = '';
+                    }else{
+                        playPuase();
+                    }
+                break;
+                case 'Escape':
+                    exitFullscreen();
+                break;
+                case ' ':
+                    playPuase();
+                break;
+            }
+
+          
         })
     }
 //====== Dragging items in video  playlist =============
@@ -1035,6 +1022,7 @@ const homedir = require('os').homedir();
         // this.classList.add('.dragElem');
         listindex = videolist.indexOf(e.target)
     }
+    
     function addDnDHandlers(elem) {
         elem.addEventListener('dragstart', handleDragStart, false);
         elem.addEventListener('dragenter', handleDragEnter, false)
@@ -1053,6 +1041,7 @@ const homedir = require('os').homedir();
 
         btn[0].addEventListener('click', () => {
             clearRecents(appFolders());
+            // removeDir(appFolders())
             elem.style.display = 'none';
         });
         btn[1].addEventListener('click', () => {elem.style.display = 'none';});
@@ -1068,59 +1057,59 @@ const homedir = require('os').homedir();
     }
 
     //========= Dragable Div Function ==========
-    function dragElement(element, dragzone){
-        let pos1 = 0,
-            pos2 = 0,
-            pos3 = 0,
-            pos4 = 0;
-        //MouseUp occurs when the user releases the mouse button
-        const dragMouseUp = () => {
-            document.onmouseup = null;
-            //onmousemove attribute fires when the pointer is moving while it is over an element.
-            document.onmousemove = null;
+    // function dragElement(element, dragzone){
+    //     let pos1 = 0,
+    //         pos2 = 0,
+    //         pos3 = 0,
+    //         pos4 = 0;
+    //     //MouseUp occurs when the user releases the mouse button
+    //     const dragMouseUp = () => {
+    //         document.onmouseup = null;
+    //         //onmousemove attribute fires when the pointer is moving while it is over an element.
+    //         document.onmousemove = null;
 
-            element.classList.remove("drag");
-        };
+    //         element.classList.remove("drag");
+    //     };
 
-        const dragMouseMove = (event) => {
+    //     const dragMouseMove = (event) => {
 
-            event.preventDefault();
-            //clientX property returns the horizontal coordinate of the mouse pointer
-            pos1 = pos3 - event.clientX;
-            //clientY property returns the vertical coordinate of the mouse pointer
-            pos2 = pos4 - event.clientY;
-            pos3 = event.clientX;
-            pos4 = event.clientY;
-            //offsetTop property returns the top position relative to the parent
-            element.style.top = `${element.offsetTop - pos2}px`;
-            element.style.left = `${element.offsetLeft - pos1}px`;
-        };
+    //         event.preventDefault();
+    //         //clientX property returns the horizontal coordinate of the mouse pointer
+    //         pos1 = pos3 - event.clientX;
+    //         //clientY property returns the vertical coordinate of the mouse pointer
+    //         pos2 = pos4 - event.clientY;
+    //         pos3 = event.clientX;
+    //         pos4 = event.clientY;
+    //         //offsetTop property returns the top position relative to the parent
+    //         element.style.top = `${element.offsetTop - pos2}px`;
+    //         element.style.left = `${element.offsetLeft - pos1}px`;
+    //     };
 
-        const dragMouseDown = (event) => {
-            event.preventDefault();
+    //     const dragMouseDown = (event) => {
+    //         event.preventDefault();
 
-            pos3 = event.clientX;
-            pos4 = event.clientY;
+    //         pos3 = event.clientX;
+    //         pos4 = event.clientY;
 
-            element.classList.add("drag");
+    //         element.classList.add("drag");
 
-            document.onmouseup = dragMouseUp;
-            document.onmousemove = dragMouseMove;
-        };
+    //         document.onmouseup = dragMouseUp;
+    //         document.onmousemove = dragMouseMove;
+    //     };
 
-        dragzone.onmousedown = dragMouseDown;
-    };
+    //     dragzone.onmousedown = dragMouseDown;
+    // };
 
-    function saveCurrentVideo(path, title, time){
-        let obj = {
-            path: path,
-            title: title,
-            time: time
-        }
+    // function saveCurrentVideo(path, title, time){
+    //     let obj = {
+    //         path: path,
+    //         title: title,
+    //         time: time
+    //     }
 
-        const json = JSON.stringify(obj);
-        localStorage.setItem("currentVideo", json);
-    }
+    //     const json = JSON.stringify(obj);
+    //     localStorage.setItem("currentVideo", json);
+    // }
 
     function getlastVideo(){
         let lastVideo = localStorage.getItem("currentVideo");
@@ -1128,11 +1117,13 @@ const homedir = require('os').homedir();
         if(json){
             video.src = json.path;
             goToVideoTime(parseFloat(json.time)); 
-                videoTitle.textContent = `${json.title} - ZVP`
-                closeNav(); 
-                playPuase(); 
-                hideMenu(); 
-                enablingElements();           
+            videoTitle.textContent = `${json.title} - ZVP`
+            closeNav(); 
+            playPuase(); 
+            hideMenu(); 
+            enablingElements();           
+        }else{
+            console.log("No video found")
         }
     }
 
@@ -1140,6 +1131,26 @@ const homedir = require('os').homedir();
        document.getElementById('btn-continue').addEventListener("click", () => {
         getlastVideo();
        })  
+    }
+
+    function openWith(){
+        try{
+            var data = ipc.sendSync('get-file-data');
+                if (data ===  null) {return;
+                } else if(data.includes('mp4')){
+                    let filename = data.substring(data.lastIndexOf('\\') + 1);
+                   const newData = fileUrl(data);
+                    video.src = newData;
+                    videoTitle.textContent = `${filename} - ZVP`
+                    closeNav();
+                    playPuase();
+                    hideMenu();
+                    enablingElements();
+                }  
+            
+        }catch(e){
+            console.log(e.message);
+        }   
     }
 
 //========= EventListener handlers =============
@@ -1166,7 +1177,6 @@ const homedir = require('os').homedir();
     fullscreenBtn.onclick = toggleFullscreen;
     videoDiv.ondrop = dropVideo;
     window.onmousemove = windowMouseMove;
-    window.onkeyup = windowMouseKeyup;
     videoDiv.ondragover = preventDefault;
     openPlaylist.onclick = openNav;
     closePlaylist.onclick = closeNav;
@@ -1176,17 +1186,9 @@ const homedir = require('os').homedir();
         return onFullScreen(e);
     }, false);
 
-    btnGo.addEventListener('click', () => {
+    btnGo.addEventListener('click', (evt) => {
         goToVideoTime(numb.value);
-        numb.value = '';
-    });
-
-    numb.addEventListener('keydown', (evt) => { 
-        if (isNaN(String.fromCharCode(evt.which))) e.preventDefault();
-        if(evt.key === 'Enter'){   
-            goToVideoTime(numb.value);
-            numb.value = '';
-        }
+        // numb.value = "";
     });
 
     btnClearList.addEventListener('click', () => {
@@ -1218,5 +1220,6 @@ const homedir = require('os').homedir();
 
     shortCut();
     ResumeLastVideo();
+    openWith();
 
 })();

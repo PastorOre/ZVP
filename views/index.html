@@ -13,7 +13,7 @@
                 <img class="icon" src="../svg/menu.svg" id="app-menu">
                 <span class="video-title">ZVP</span>
             </div>
-            <div id="open-playlist"><img src="../svg/sidebar-open.svg"></div>
+            <!-- <div id="open-playlist"><img src="../svg/sidebar-open.svg"></div> -->
             <div id="control-box">
                     <div class="button" id="min-button">&#xE921;</div>
                     <div class="button" id="max-button">&#xE922;</div>
@@ -103,7 +103,8 @@
         </div> 
          <div id="video-info">
             <!-- <div> -->
-             <div id="file-name">Ready</div>
+            <div id="open-playlist"><img src="../svg/sidebar-open.svg"></div>
+            <div id="file-name">Ready</div>
             <!-- </div>        -->
             <div class="continue-last-video" title="Continue with last video">
                 <button id="btn-continue">Resume</button>
@@ -111,20 +112,20 @@
              <div id="events">
                  <div id="goto" title="Navigate video to (minutes)">
                      <input id="go-input" title="type duration here" />
-                     </input><button id="btn-go" disabled>Go</button>
+                     </input><button id="btn-go">Go</button>
                  </div>
              </div> 
          </div>  
          <div class="about-overlay">
             <div id="about-dialog">
                 <div id="dialog-heaeder">
-                    <span>Ziza Video Player</span>
+                    <span>ZVP</span>
                     <button class="btn-close-dialodg">&#xE8BB;</button>
                 </div>
                 <div class="dialog-body">
                     <img class="icon" src="../assets/icons/icon.png">
                     <div>
-                        <div class="appName">Ziza Video Player</div>
+                        <div class="appName">ZVP <span>(Ziza Video Player)</span></div>
                         <p>Version 1.0.0</p>
                         <p  class="copyright">2023 &copy; Joseph A. Ore</p>
                     </div>

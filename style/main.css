@@ -292,13 +292,20 @@ input[type=range]:focus {
     padding: 0.25em 0.5em;
 }
 
-#video-info div:first-child{
+#video-info div:nth-child(2){
     display: flex;
     align-items: center;
     flex: 1;
 }
 
+#open-playlist{
+    opacity: 0.5;
+    cursor: pointer;
+}
 
+#open-playlist:hover{
+    opacity: 0.8;
+}
 
 /* #video-info img {
     width: 22px;
@@ -882,11 +889,18 @@ input[type=range]:focus {
 #about-dialog{
     position: absolute;
     display: block;
+    width: 22em;
+    max-width: 25em;
     background-color: #f5f5f5;
     border-radius: 0.5em;
     font-family: system-ui;
     border: 0.05em solid #bababa;
     z-index: 999;
+}
+
+.appName span{
+    font-size: 0.5em;
+    color: #666;
 }
 
 #dialog-heaeder{

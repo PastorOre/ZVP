@@ -14,6 +14,12 @@
       "target": [
         "nsis"
       ],
+      "fileAssociations": [
+        {
+          "ext": "mp4",
+          "name": "Video File"
+        }
+      ],
       "icon": "icon.ico"
     },
     "nsis": {

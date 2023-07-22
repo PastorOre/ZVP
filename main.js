@@ -56,7 +56,9 @@ let boot = () => {
     
     win.once('ready-to-show', () => {
         win.show();
-    })
+    });
+
+    openWith();
 }
 
 app.on('ready', boot);
@@ -68,4 +70,17 @@ app.on('window-all-closed', () => {
 });
 
 ipc.on('exit', () => {app.quit();});
+
+function openWith(){
+    ipc.on('get-file-data', function(event) {
+        var data = null
+        if (process.argv.length >= 2) {
+          var openFilePath = process.argv[1];
+          data = openFilePath;
+        }
+        event.returnValue = data
+    });
+}
+
+
 
