@@ -48,7 +48,9 @@ const homedir = require('os').homedir();
     const aboutDragZone = document.querySelector('#dialog-heaeder');
     const dialog = document.querySelector('#confirmDialog');
     const dragzone = document.querySelector('#dragzone');
-    const modal = document.querySelector('.overlay')
+    const modal = document.querySelector('.overlay');
+    const btnResume = document.querySelector('.resume-card')
+    // const btnResume = document.querySelector('.continue-last-video');
 
     var playicon = '<img width="24px" height="24px" src="../svg/play.svg" />',
         pauseicon = '<img width="24px" height="24px" src="../svg/pause.svg" />',
@@ -212,9 +214,22 @@ const homedir = require('os').homedir();
                 playerStatus.textContent = "Paused";
                 //======= save current video and current time lapse
                 let title = videoTitle.textContent.substring(0, videoTitle.textContent.lastIndexOf('-'));
-                 saveCurrentVideo(video.src, title, format(video.currentTime)) 
+                 saveCurrentVideo(video.src, title, format(video.currentTime), snapCurrentFrame()) 
+
+                //  snapCurrentFrame();
               }
         }
+    }
+
+    function snapCurrentFrame(){
+        let canvas = document.createElement('canvas');
+        let context = canvas.getContext('2d');
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0);
+        let image = canvas.toDataURL();
+        return image;
     }
 
     function timeDuration(){
@@ -281,6 +296,7 @@ const homedir = require('os').homedir();
         URL.revokeObjectURL(link.href);
         }, 'image/png');
     }
+
     function videoEnded(){
         var a = document.querySelector('li.active');
         try{
@@ -524,11 +540,11 @@ const homedir = require('os').homedir();
               }
             };
             srcvideo.addEventListener('loadeddata', function() {
-              if (snapImage()) {
+              if (snapImage(srcvideo)) {
                 srcvideo.removeEventListener('timeupdate', timeupdate);
               }
             });
-            const snapImage = function() {
+            const snapImage = function(srcvideo) {
               var canvas = document.createElement('canvas');
               canvas.width = srcvideo.videoWidth;
               canvas.height = srcvideo.videoHeight;
@@ -628,6 +644,7 @@ const homedir = require('os').homedir();
     function closeNav() {
         videosList.style.width = "0";
         menu.style.display = 'none';
+        btnResume.style.width = '0em';
         if(modal.style.display == "flex"){
             modal.style.display = "none";
         }
@@ -687,7 +704,8 @@ const homedir = require('os').homedir();
 
     function isPlaying(){
         try{
-       vdDuration.innerHTML = format(video.duration);
+            vdDuration.innerHTML = format(video.duration);
+            video.style.cursor = "default";
         } catch(e){
            console.log(e.message);
         }
@@ -1024,7 +1042,8 @@ const homedir = require('os').homedir();
         if(json){
             video.src = json.path;
             goToVideoTime(parseFloat(json.time)); 
-            videoTitle.textContent = `${json.title} - ZVP`
+            videoTitle.textContent = `${json.title} - ZVP`;
+            video.setAttribute("poster", json.image);
             closeNav(); 
             playPuase(); 
             hideMenu(); 
@@ -1034,10 +1053,35 @@ const homedir = require('os').homedir();
         }
     }
 
-    function ResumeLastVideo(){
-       document.getElementById('btn-continue').addEventListener("click", () => {
-        getlastVideo();
-       })  
+    function resumeCard(){
+        loadPausePoster()
+        btnResume.style.width = '6em';
+        btnResume.addEventListener('click', () => {
+            getlastVideo();
+            btnResume.style.width = '0em';
+        });
+
+        btnResume.addEventListener('mouseover', () => {
+            return false;
+        });
+
+        btnResume.addEventListener('mouseout', () => {
+            setTimeout(() => {
+                btnResume.style.width = '0em';;
+            }, 5000);
+        });  
+    }
+
+    function loadPausePoster(){
+        let lastVideo = localStorage.getItem("currentVideo");
+        const poster = document.querySelector(".resume-card > img");
+        let json = JSON.parse(lastVideo)
+        if(json){
+            videoTitle.textContent = `${json.title} - ZVP`;
+            poster.src = json.image;          
+        }else{
+            console.log("No video found");
+        }
     }
 
     function openWith(){
@@ -1048,7 +1092,7 @@ const homedir = require('os').homedir();
                     let filename = data.substring(data.lastIndexOf('\\') + 1);
                    const newData = fileUrl(data);
                     video.src = newData;
-                    videoTitle.textContent = `${filename} - ZVP`
+                    videoTitle.textContent = `${filename} - ZVP`;;
                     closeNav();
                     playPuase();
                     hideMenu();
@@ -1153,9 +1197,7 @@ const homedir = require('os').homedir();
     createDirectories("zvp/playlist");;
     createPlaylist();
     getVideoDetails();
-
-    // shortCut();
-    ResumeLastVideo();
     openWith();
+    resumeCard();
 
 })();
