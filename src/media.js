@@ -1055,6 +1055,7 @@ const homedir = require('os').homedir();
 
     function resumeCard(){
         loadPausePoster()
+        const myTimeOut =  setTimeout(hideResumeCard, 5000);
         btnResume.style.width = '6em';
         btnResume.addEventListener('click', () => {
             getlastVideo();
@@ -1062,14 +1063,16 @@ const homedir = require('os').homedir();
         });
 
         btnResume.addEventListener('mouseover', () => {
-            return false;
+          clearTimeout(myTimeOut)
         });
 
         btnResume.addEventListener('mouseout', () => {
-            setTimeout(() => {
-                btnResume.style.width = '0em';;
-            }, 5000);
+            setTimeout(hideResumeCard, 5000);
         });  
+    }
+
+    function hideResumeCard(){
+        btnResume.style.width = '0em';
     }
 
     function loadPausePoster(){
