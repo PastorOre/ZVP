@@ -1,7 +1,7 @@
 const electron = require('electron');
 const amp = require('../lib/createAmplifier');
 const {fileUrl, saveCurrentVideo, 
-    createDirectories, copyToTempDirectory} = require('../lib/fileUtil');
+    createDirectories} = require('../lib/fileUtil');
 const dragElement = require('../lib/dragable');
 const path = require('path');
 const fs = require('fs');
@@ -72,6 +72,7 @@ const homedir = require('os').homedir();
     scaleFactor:number=0.25;
     let videoDuration = 0;
     let videosObj = [];
+    let currentVideo = null;
 
     const lstMenu = remote.Menu.buildFromTemplate([
         {
@@ -214,13 +215,16 @@ const homedir = require('os').homedir();
                 playerStatus.textContent = "Paused";
                 //======= save current video and current time lapse
                 let title = videoTitle.textContent.substring(0, videoTitle.textContent.lastIndexOf('-'));
-                 saveCurrentVideo(video.src, title, format(video.currentTime), snapCurrentFrame()) 
-
-                //  snapCurrentFrame();
+                let videoURL = video.src;
+                if(currentVideo !== null){
+                    videoURL = currentVideo
+                }
+                 saveCurrentVideo(videoURL, title, format(video.currentTime), snapCurrentFrame()) 
               }
         }
     }
 
+//  snapCurrentFrame();
     function snapCurrentFrame(){
         let canvas = document.createElement('canvas');
         let context = canvas.getContext('2d');
@@ -455,6 +459,9 @@ const homedir = require('os').homedir();
             playlist.innerHTML = '';
             playPuase();
             clearListInfo();
+
+            // this enables saving the current  video path in a normal string
+            currentVideo = files[0].path; 
           }      
 
 		for (const file of Array.from(files)) {
@@ -563,7 +570,10 @@ const homedir = require('os').homedir();
                 title="${file.name}"/>
                 <span class="video-duration">${format(srcvideo.duration)}</span>`;
              
-                listItem.addEventListener('click', doImgClick, false)
+                listItem.addEventListener('click', (e) => {
+                    doImgClick(e)
+                    currentVideo = file.path;
+                })
                 listItem.addEventListener('contextmenu', (event) => {
                     event.preventDefault();
                     lstMenu.popup(remote.getCurrentWindow());
@@ -982,7 +992,8 @@ const homedir = require('os').homedir();
                 current.classList.remove('active');
             } 
             dropElem.classList.add('active');  
-            enablingElements();        
+            enablingElements();  
+        
         });
 
         dropElem.addEventListener('contextmenu', (event) => {
@@ -1042,19 +1053,17 @@ const homedir = require('os').homedir();
         if(json){
             video.src = json.path;
             goToVideoTime(parseFloat(json.time)); 
-            videoTitle.textContent = `${json.title} - ZVP`;
-            video.setAttribute("poster", json.image);
+            videoTitle.textContent = `${json.title} - ZVP`;  
             closeNav(); 
             playPuase(); 
             hideMenu(); 
-            enablingElements();           
+            enablingElements();     
         }else{
             console.log("No video found")
         }
     }
 
-    function resumeCard(){
-        loadPausePoster()
+    function resumeLastVideo(){
         const myTimeOut =  setTimeout(hideResumeCard, 5000);
         btnResume.style.width = '6em';
         btnResume.addEventListener('click', () => {
@@ -1075,13 +1084,13 @@ const homedir = require('os').homedir();
         btnResume.style.width = '0em';
     }
 
-    function loadPausePoster(){
+    function resumeThumbnail(){
         let lastVideo = localStorage.getItem("currentVideo");
         const poster = document.querySelector(".resume-card > img");
         let json = JSON.parse(lastVideo)
         if(json){
             videoTitle.textContent = `${json.title} - ZVP`;
-            poster.src = json.image;          
+            poster.src = json.image;        
         }else{
             console.log("No video found");
         }
@@ -1201,6 +1210,8 @@ const homedir = require('os').homedir();
     createPlaylist();
     getVideoDetails();
     openWith();
-    resumeCard();
+
+    resumeThumbnail();
+    resumeLastVideo();
 
 })();
