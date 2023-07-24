@@ -984,6 +984,16 @@ input[type=range]:focus {
     width: 100%;
 }
 
+#open-settings img{
+    width: 18px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+#open-settings img:hover{
+    opacity: 0.75;
+}
+
 /* .show{
     display: flex; 
 } */

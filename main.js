@@ -6,7 +6,7 @@ const Store = require('./lib/store.js');
 const ipc = electron.ipcMain;
 const dialog = electron.dialog;
 
-let win;
+let win = null;
 
 // First instantiate the class
 const store = new Store({
@@ -61,6 +61,19 @@ let boot = () => {
     openWith();
 }
 
+// const gotTheLock = app.requestSingleInstanceLock()
+    
+// if (!gotTheLock) {
+//   app.quit()
+// } else {
+//   app.on('second-instance', (event) => {
+//     if (win) {
+//       if (win.isMinimized()) win.restore()
+//       win.focus()
+//     }
+//   })
+// }   
+
 app.on('ready', boot);
 
 app.on('window-all-closed', () => {
@@ -74,7 +87,7 @@ ipc.on('exit', () => {app.quit();});
 function openWith(){
     ipc.on('get-file-data', function(event) {
         var data = null
-        if (process.argv.length >= 2) {
+        if (process.argv.length > 1) {
           var openFilePath = process.argv[1];
           data = openFilePath;
         }

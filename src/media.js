@@ -219,7 +219,7 @@ const homedir = require('os').homedir();
                 if(currentVideo !== null){
                     videoURL = currentVideo
                 }
-                 saveCurrentVideo(videoURL, title, format(video.currentTime), snapCurrentFrame()) 
+                 saveCurrentVideo(videoURL, title, video.currentTime, snapCurrentFrame()) 
               }
         }
     }
@@ -459,7 +459,6 @@ const homedir = require('os').homedir();
             playlist.innerHTML = '';
             playPuase();
             clearListInfo();
-
             // this enables saving the current  video path in a normal string
             currentVideo = files[0].path; 
           }      
@@ -714,8 +713,9 @@ const homedir = require('os').homedir();
 
     function isPlaying(){
         try{
-            vdDuration.innerHTML = format(video.duration);
-            video.style.cursor = "default";
+            vdDuration.innerHTML = format(video.duration);  
+            video.style.cursor = "default"; 
+            video.removeAttribute('title');         
         } catch(e){
            console.log(e.message);
         }
@@ -1051,9 +1051,10 @@ const homedir = require('os').homedir();
         let lastVideo = localStorage.getItem("currentVideo");
         let json = JSON.parse(lastVideo)
         if(json){
-            video.src = json.path;
-            goToVideoTime(parseFloat(json.time)); 
+            video.currentTime = parseFloat(json.time);
             videoTitle.textContent = `${json.title} - ZVP`;  
+            video.src = json.path;
+            // timeDuration()
             closeNav(); 
             playPuase(); 
             hideMenu(); 
@@ -1084,7 +1085,7 @@ const homedir = require('os').homedir();
         btnResume.style.width = '0em';
     }
 
-    function resumeThumbnail(){
+    function resumeWithThumbnail(){
         let lastVideo = localStorage.getItem("currentVideo");
         const poster = document.querySelector(".resume-card > img");
         let json = JSON.parse(lastVideo)
@@ -1096,15 +1097,35 @@ const homedir = require('os').homedir();
         }
     }
 
+    function resumeWithVideoPoster(){
+        let lastVideo = localStorage.getItem("currentVideo");
+        let json = JSON.parse(lastVideo)
+        if(json){
+            videoTitle.textContent = `${json.title} - ZVP`;
+            video.setAttribute('title', 'Click to resume video');
+            video.setAttribute('poster', json.image); 
+            video.style.cursor = 'pointer';     
+        }else{
+            console.log("No video found");
+        }
+
+        video.addEventListener("click", () => {
+            if(video.src.includes('mp4')){ return } 
+            getlastVideo();
+        });
+
+    }
+
     function openWith(){
         try{
-            var data = ipc.sendSync('get-file-data');
+            var data = ipc.sendSync('get-file-data');    
                 if (data ===  null) {return;
                 } else if(data.includes('mp4')){
+                    btnResume.style.width = '0em';
                     let filename = data.substring(data.lastIndexOf('\\') + 1);
-                   const newData = fileUrl(data);
+                    const newData = fileUrl(data);     
                     video.src = newData;
-                    videoTitle.textContent = `${filename} - ZVP`;;
+                    videoTitle.textContent = `${filename} - ZVP`;
                     closeNav();
                     playPuase();
                     hideMenu();
@@ -1195,7 +1216,6 @@ const homedir = require('os').homedir();
     });
 
 //========== Button tooltips ===================
-    // openBtn.title = "Open Video File";
     snapshotBtn.title = "Take Snapshot";
     muteBtn.title = "Mute";
     playPuaseBtn.title = "Play";
@@ -1208,10 +1228,9 @@ const homedir = require('os').homedir();
     dragElement(aboutDialog, aboutDragZone);
     createDirectories("zvp/playlist");;
     createPlaylist();
-    getVideoDetails();
-    openWith();
-
-    resumeThumbnail();
+    getVideoDetails(); 
+    // resumeWithThumbnail();
+    resumeWithVideoPoster();
     resumeLastVideo();
-
+    openWith();
 })();
