@@ -58,8 +58,10 @@ let boot = () => {
         win.show();
     });
 
+
     openWith();
 }
+
 
 // const gotTheLock = app.requestSingleInstanceLock()
     

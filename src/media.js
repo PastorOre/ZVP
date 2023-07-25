@@ -110,8 +110,8 @@ const homedir = require('os').homedir();
         },
         {
             label: 'Pause',
-           click: () => {
-               playPuase()
+           click: () => {          
+                playPuase() 
            }
         },
         {
@@ -714,8 +714,7 @@ const homedir = require('os').homedir();
     function isPlaying(){
         try{
             vdDuration.innerHTML = format(video.duration);  
-            video.style.cursor = "default"; 
-            video.removeAttribute('title');         
+            video.style.cursor = "default";        
         } catch(e){
            console.log(e.message);
         }
@@ -1104,7 +1103,11 @@ const homedir = require('os').homedir();
             videoTitle.textContent = `${json.title} - ZVP`;
             video.setAttribute('title', 'Click to resume video');
             video.setAttribute('poster', json.image); 
-            video.style.cursor = 'pointer';     
+            video.setAttribute('key', 'image');
+            video.style.cursor = 'pointer';  
+            // ctxMenu.items[2].enabled = true; 
+            // ctxMenu.items[2].visible = true;  
+            
         }else{
             console.log("No video found");
         }
