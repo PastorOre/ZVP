@@ -1046,75 +1046,79 @@ const homedir = require('os').homedir();
         elem.style.display = 'flex';
     }
 
-    function getlastVideo(){
-        let lastVideo = localStorage.getItem("currentVideo");
-        let json = JSON.parse(lastVideo)
-        if(json){
-            video.currentTime = parseFloat(json.time);
-            videoTitle.textContent = `${json.title} - ZVP`;  
-            video.src = json.path;
-            // timeDuration()
-            closeNav(); 
-            playPuase(); 
-            hideMenu(); 
-            enablingElements();     
-        }else{
-            console.log("No video found")
-        }
-    }
+    // function getlastVideo(){
+    //     let lastVideo = localStorage.getItem("currentVideo");
+    //     let json = JSON.parse(lastVideo)
+    //     if(json){
+    //         video.currentTime = parseFloat(json.time);
+    //         videoTitle.textContent = `${json.title} - ZVP`;  
+    //         video.src = json.path;
+    //         // timeDuration()
+    //         closeNav(); 
+    //         playPuase(); 
+    //         hideMenu(); 
+    //         enablingElements();     
+    //     }else{
+    //         console.log("No video found")
+    //     }
+    // }
 
-    function resumeLastVideo(){
-        const myTimeOut =  setTimeout(hideResumeCard, 5000);
-        btnResume.style.width = '6em';
-        btnResume.addEventListener('click', () => {
-            getlastVideo();
-            btnResume.style.width = '0em';
-        });
+    // function resumeLastVideo(){
+    //     const myTimeOut =  setTimeout(hideResumeCard, 5000);
+    //     btnResume.style.width = '6em';
+    //     btnResume.addEventListener('click', () => {
+    //         getlastVideo();
+    //         btnResume.style.width = '0em';
+    //     });
 
-        btnResume.addEventListener('mouseover', () => {
-          clearTimeout(myTimeOut)
-        });
+    //     btnResume.addEventListener('mouseover', () => {
+    //       clearTimeout(myTimeOut)
+    //     });
 
-        btnResume.addEventListener('mouseout', () => {
-            setTimeout(hideResumeCard, 5000);
-        });  
-    }
+    //     btnResume.addEventListener('mouseout', () => {
+    //         setTimeout(hideResumeCard, 5000);
+    //     });  
+    // }
 
-    function hideResumeCard(){
-        btnResume.style.width = '0em';
-    }
+    // function hideResumeCard(){
+    //     btnResume.style.width = '0em';
+    // }
 
-    function resumeWithThumbnail(){
-        let lastVideo = localStorage.getItem("currentVideo");
-        const poster = document.querySelector(".resume-card > img");
-        let json = JSON.parse(lastVideo)
-        if(json){
-            videoTitle.textContent = `${json.title} - ZVP`;
-            poster.src = json.image;        
-        }else{
-            console.log("No video found");
-        }
-    }
+    // function resumeWithThumbnail(){
+    //     let lastVideo = localStorage.getItem("currentVideo");
+    //     const poster = document.querySelector(".resume-card > img");
+    //     let json = JSON.parse(lastVideo)
+    //     if(json){
+    //         videoTitle.textContent = `${json.title} - ZVP`;
+    //         poster.src = json.image;        
+    //     }else{
+    //         console.log("No video found");
+    //     }
+    // }
 
     function resumeWithVideoPoster(){
         let lastVideo = localStorage.getItem("currentVideo");
         let json = JSON.parse(lastVideo)
         if(json){
             videoTitle.textContent = `${json.title} - ZVP`;
-            video.setAttribute('title', 'Click to resume video');
-            video.setAttribute('poster', json.image); 
-            video.setAttribute('key', 'image');
+            playerStatus.textContent = "Paused";
             video.style.cursor = 'pointer';  
-            // ctxMenu.items[2].enabled = true; 
-            // ctxMenu.items[2].visible = true;  
+            video.src = json.path;
+            video.currentTime = parseFloat(json.time);
+            video.pause();
+            ctxMenu.items[2].enabled = true; 
+            ctxMenu.items[2].visible = true;  
             
         }else{
             console.log("No video found");
         }
 
         video.addEventListener("click", () => {
-            if(video.src.includes('mp4')){ return } 
-            getlastVideo();
+            closeNav(); 
+            playPuase(); 
+            hideMenu(); 
+            enablingElements();
+            video.play();
         });
 
     }
@@ -1234,6 +1238,6 @@ const homedir = require('os').homedir();
     getVideoDetails(); 
     // resumeWithThumbnail();
     resumeWithVideoPoster();
-    resumeLastVideo();
+    // resumeLastVideo();
     openWith();
 })();
