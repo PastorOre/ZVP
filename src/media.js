@@ -714,7 +714,7 @@ const homedir = require('os').homedir();
     function isPlaying(){
         try{
             vdDuration.innerHTML = format(video.duration);  
-            video.style.cursor = "default";        
+            video.style.cursor = "default";     
         } catch(e){
            console.log(e.message);
         }
@@ -1113,14 +1113,6 @@ const homedir = require('os').homedir();
         }else{
             console.log("No video found");
         }
-
-        video.addEventListener("click", () => {
-            video.play();
-            closeNav(); 
-            playPuase(); 
-            hideMenu();  
-        });
-
     }
 
     function openWith(){
