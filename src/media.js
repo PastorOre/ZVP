@@ -1107,18 +1107,18 @@ const homedir = require('os').homedir();
             video.currentTime = parseFloat(json.time);
             video.pause();
             ctxMenu.items[2].enabled = true; 
-            ctxMenu.items[2].visible = true;  
+            ctxMenu.items[2].visible = true; 
+            enablingElements(); 
             
         }else{
             console.log("No video found");
         }
 
         video.addEventListener("click", () => {
+            video.play();
             closeNav(); 
             playPuase(); 
-            hideMenu(); 
-            enablingElements();
-            video.play();
+            hideMenu();  
         });
 
     }
