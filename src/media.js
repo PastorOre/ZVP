@@ -50,10 +50,11 @@ const homedir = require('os').homedir();
     const dialog = document.querySelector('#confirmDialog');
     const dragzone = document.querySelector('#dragzone');
     const modal = document.querySelector('.overlay');
-    const btnResume = document.querySelector('.resume-card')
+    const btnResume = document.querySelector('.resume-card');
+    const eqlControls = document.querySelectorAll('.controls > input[type="range"]');
     // const btnResume = document.querySelector('.continue-last-video');
 
-    var playicon = '<img width="24px" height="24px" src="../svg/play.svg" />',
+    let playicon = '<img width="24px" height="24px" src="../svg/play.svg" />',
         pauseicon = '<img width="24px" height="24px" src="../svg/pause.svg" />',
         muteicon = '<img width="24px" height="24px" src="../svg/volume-mute.svg" />',
         volumeicon = '<img width="24px" height="24px" src="../svg/volume-medium.svg" />',
@@ -61,19 +62,21 @@ const homedir = require('os').homedir();
         e_screenicon = '<img width="24px" height="24px" src="../svg/fullscreen-exit.svg" />';
 
 
-    var mousedown = false;
-    var videolist = [];
-    var dragSrcEl = null;
-    var index = null;
-    var listindex = null;
+    let mousedown = false;
+    let videolist = [];
+    let filters = [];
+    let dragSrcEl = null;
+    let index = null;
+    let listindex = null;
     mediaControls.style.display = 'none'
-    var current = '';
+    let current = '';
     let contextFilePath = '';
     let contextFile = '';
     scaleFactor:number=0.25;
     let videoDuration = 0;
     let videosObj = [];
     let currentVideo = null;
+    let videoURL = null;
 
     const lstMenu = remote.Menu.buildFromTemplate([
         {
@@ -215,12 +218,12 @@ const homedir = require('os').homedir();
                 playPuaseBtn.title = "Play";
                 playerStatus.textContent = "Paused";
                 //======= save current video and current time lapse
-                let title = videoTitle.textContent.substring(0, videoTitle.textContent.lastIndexOf('-'));
-                let videoURL = video.src;
-                if(currentVideo !== null){
-                    videoURL = currentVideo
-                }
-                 saveCurrentVideo(videoURL, title, video.currentTime, snapCurrentFrame()) 
+                // let title = videoTitle.textContent.substring(0, videoTitle.textContent.lastIndexOf('-'));
+                // let videoURL = video.src;
+                // if(currentVideo !== null){
+                //     videoURL = currentVideo
+                // }
+                //  saveCurrentVideo(videoURL, title, video.currentTime, snapCurrentFrame()) 
               }
         }
     }
@@ -1117,30 +1120,18 @@ const homedir = require('os').homedir();
 //             }
 //         }
 //     }
-    function eqlSettingsDialog(){
-        const btnOpenSettings = document.getElementById('open-settings');
-        const eqlBtn = document.querySelectorAll('.eql-dragzone > span');
-
-        btnOpenSettings.addEventListener('click', () => {  
-            eqlDialog.classList.toggle('show-eql');
-        });
-
-       eqlBtn[1].addEventListener('click', () => {
-            eqlDialog.style.display = 'none';
-       });
-
-       setEqualizer();
-
-    }
 
     async function getLastPauseVideo(){
+        if(videoURL !== null) {
+             return   
+        } 
         let data = fs.readFileSync(path.join(appFolders(), 'video.json'));
         if(data){
             let json = JSON.parse(data)
         if(json){
             videoTitle.textContent = `${json.title} - ZVP`;
             playerStatus.textContent = "Paused";
-            video.style.cursor = 'pointer';  
+            video.style.cursor = 'pointer';
             video.src = json.path;
             video.currentTime = parseFloat(json.time);
             video.pause();
@@ -1156,12 +1147,13 @@ const homedir = require('os').homedir();
 
     function openWith(){
         try{
-            var data = ipc.sendSync('get-file-data');    
+            let data = ipc.sendSync('get-file-data');  
+            videoURL = data  
                 if (data ===  null) {return;
                 } else if(data.includes('mp4')){
                     btnResume.style.width = '0em';
                     let filename = data.substring(data.lastIndexOf('\\') + 1);
-                    const newData = fileUrl(data);     
+                    const newData = fileUrl(data);  
                     video.src = newData;
                     videoTitle.textContent = `${filename} - ZVP`;
                     closeNav();
@@ -1201,13 +1193,45 @@ const homedir = require('os').homedir();
         }
     }
 
+    function eqlSettingsDialog(){
+        const btnOpenEqualizer = document.getElementById('open-equalizer');
+        const eqlBtn = document.querySelectorAll('.eql-dragzone > span');
+       
+        btnOpenEqualizer.addEventListener('click', () => {  
+            eqlDialog.classList.toggle('show-eql');
+
+            let eqlGainVales = localStorage.getItem('eqlgain');
+            if (eqlGainVales){
+             let eqlGain = eqlGainVales.split(',');
+             eqlControls.forEach((slider, index) => { 
+                     slider.setAttribute('value', eqlGain[index]);
+                     var output = document.querySelector("#gain" + index);
+                     output.value = eqlGain[index] + " dB";
+             });
+     
+            } 
+        });
+
+       eqlBtn[1].addEventListener('click', () => {
+            eqlDialog.classList.remove('show-eql')
+            let gainValue = [];
+
+            filters.forEach((filter) => {
+                gainValue.push(filter.gain.value);
+                localStorage.setItem('eqlgain', gainValue);
+           });
+       });
+       
+       setEqualizer();
+    }
+
 function setEqualizer(){
     let ctx = window.AudioContext || window.webkitAudioContext;
     let context = new ctx();
     // var mediaElement = document.getElementById('player');
     let sourceNode = context.createMediaElementSource(video);
     // create the equalizer. It's a set of biquad Filters
-    let filters = [];
+    
     // Set filters
     [60, 170, 350, 1000, 3500, 10000].forEach(function(freq, i) {
       let eq = context.createBiquadFilter();
@@ -1223,8 +1247,7 @@ function setEqualizer(){
         filters[i].connect(filters[i+1]);
     }
     // connect the last filter to the speakers
-    filters[filters.length - 1].connect(context.destination);
-    const eqlControls = document.querySelectorAll('.controls > input[type="range"]');
+    filters[filters.length - 1].connect(context.destination);  
 
     eqlControls.forEach((slider, index) => {
         slider.addEventListener('change', () => {
@@ -1235,6 +1258,15 @@ function setEqualizer(){
             output.value = value + " dB";
         });
     })
+}
+
+function saveLastPlayingVideo() {
+    let title = videoTitle.textContent.substring(0, videoTitle.textContent.lastIndexOf('-'));
+    let videoURL = video.src;
+    if(currentVideo !== null){
+        videoURL = currentVideo
+    }
+     saveCurrentVideo(videoURL, title, video.currentTime, snapCurrentFrame())
 }
 
 //========= EventListener handlers =============
@@ -1289,6 +1321,11 @@ function setEqualizer(){
             }, 1000);
     });
 
+    window.addEventListener('unload', () => {
+        localStorage.removeItem("eqlgain");
+        saveLastPlayingVideo()
+    });
+
 //========== Button tooltips ===================
     snapshotBtn.title = "Take Snapshot";
     muteBtn.title = "Mute";
@@ -1309,7 +1346,6 @@ function setEqualizer(){
     // resumeLastVideo();
     openWith();
     getLastPauseVideo();
-    eqlSettingsDialog();
-    
+    eqlSettingsDialog(); 
     
 })();

@@ -276,7 +276,7 @@ input[type=range]:focus {
 }
 
 /* end of media control */
-
+/*========== status-bar section ===============*/
 #video-info {
     display: flex;
     width: 100%;
@@ -290,10 +290,21 @@ input[type=range]:focus {
     padding: 0.25em 0.5em;
 }
 
-#video-info div:nth-child(2){
+#video-info div:nth-child(3){
     display: flex;
     align-items: center;
     flex: 1;
+}
+
+#video-info div img{
+    width: 16px;
+    opacity: 0.5;
+    cursor: pointer;
+    margin-right: 0.5em;
+}
+
+#video-info div img:hover{
+    opacity: 0.75;
 }
 
 #open-playlist{
@@ -987,16 +998,6 @@ input[type=range]:focus {
     width: 100%;
 }
 
-#open-settings img{
-    width: 18px;
-    opacity: 0.5;
-    cursor: pointer;
-}
-
-#open-settings img:hover{
-    opacity: 0.75;
-}
-
 /*======== Equalizer section ==========*/
 
 .eql-dialog{
@@ -1011,7 +1012,7 @@ input[type=range]:focus {
     color: #fff;
     font-family: system-ui;
     border: #4e4e4e solid 0.05em;
-    width: 20em;
+    width: 22em;
     box-shadow: 2px 4px 18px rgba(0, 0, 0, 0.2);
 }
 
@@ -1023,6 +1024,7 @@ input[type=range]:focus {
     border: #4e4e4e solid 0.05em;
     font-size: 0.85em;
     align-items: center;
+    opacity: 0.5;
 }
 
 .eql-dragzone span:first{
@@ -1037,6 +1039,7 @@ input[type=range]:focus {
    font-size: 0.65em;
    padding: 5px;
    border-radius: 2px;
+   color: #fff;;
 }
 
 .eql-dragzone :nth-child(2):hover{
@@ -1049,9 +1052,17 @@ input[type=range]:focus {
     width: 100%;
 }
 
+.controls{
+    border:solid 0.03em #424242;
+    padding:0.25em 0.5em;
+    margin-bottom:0.25em;
+    border-radius: 3px;
+}
+
 .controls label, 
 .controls output {
     font-size: 0.85em;
+    opacity: 0.5;
 }
 
 .show-eql{
