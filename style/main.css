@@ -7,6 +7,7 @@
 
 #wrapper {
     display: grid;
+    position: relative;
     grid-template-rows: auto 1fr auto;
     min-height: 100%;
     height: 100vh;
@@ -118,8 +119,6 @@ header #control-box .button:hover {
 
 /* end of header */
 #main-content {
-    /* align-self: stretch; */
-    /* width: 100%; */
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -399,7 +398,7 @@ input[type=range]:focus {
     border: none;
     padding-left: 1em;
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 0.75em;
     font-family: system-ui;
 }
 
@@ -620,6 +619,10 @@ input[type=range]:focus {
     font-size: 0.8em;
     padding-top: 5px;
     font-weight: normal
+}
+
+#file-name{
+    font-size: 0.9em;
 }
 
 /*===== end of playlist info and list drag and drop =====*/
@@ -994,6 +997,63 @@ input[type=range]:focus {
     opacity: 0.75;
 }
 
-/* .show{
-    display: flex; 
-} */
+/*======== Equalizer section ==========*/
+
+.eql-dialog{
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 0.4em;
+    background-color: #222222;
+    color: #fff;
+    font-family: system-ui;
+    border: #4e4e4e solid 0.05em;
+    width: 20em;
+    box-shadow: 2px 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.eql-dialog .eql-dragzone{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 0.5em;
+    cursor: move;
+    border: #4e4e4e solid 0.05em;
+    font-size: 0.85em;
+    align-items: center;
+}
+
+.eql-dragzone span:first{
+    display: flex;
+    flex: 1;
+}
+
+.eql-dragzone :nth-child(2){
+   cursor: pointer;
+   user-select: none;
+   font-family: "Segoe MDL2 Assets";
+   font-size: 0.65em;
+   padding: 5px;
+   border-radius: 2px;
+}
+
+.eql-dragzone :nth-child(2):hover{
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.eql-dialog .eql-body{
+    gap: 1em;
+    padding: 1.5em;
+    width: 100%;
+}
+
+.controls label, 
+.controls output {
+    font-size: 0.85em;
+}
+
+.show-eql{
+    display: flex;
+}

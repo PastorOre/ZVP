@@ -139,6 +139,44 @@
          <div id="folder" style="display: none">
             <input id="open-folder" style="display: none" type="file" multiple accept="video/mp4" />
         </div>
+        <div class="eql-dialog">
+            <div class="eql-dragzone">
+                <span>Equalizer</span>
+                <span title="Close">&#xE8BB;</span>
+            </div>
+            <div class="eql-body">
+                <div class="controls">
+                    <label>60Hz</label>
+                    <input type="range" value="0" step="1" min="-30" max="30"></input>
+                    <output id="gain0">0 dB</output>
+                </div>
+                <div class="controls">
+                    <label>170Hz</label>
+                    <input type="range" value="0" step="1" min="-30" max="30"></input>
+                    <output id="gain1">0 dB</output>
+                </div>
+                <div class="controls">
+                    <label>350Hz</label>
+                    <input type="range" value="0" step="1" min="-30" max="30"></input>
+                    <output id="gain2">0 dB</output>
+                </div>
+                <div class="controls">
+                    <label>1000Hz</label>
+                    <input type="range" value="0" step="1" min="-30" max="30"></input>
+                    <output id="gain3">0 dB</output>
+                </div>
+                <div class="controls">
+                    <label>3500Hz</label>
+                    <input type="range" value="0" step="1" min="-30" max="30"></input>
+                    <output id="gain4">0 dB</output>
+                </div>
+                <div class="controls">
+                    <label>10000Hz</label>
+                    <input type="range" value="0" step="1" min="-30" max="30"></input>
+                    <output id="gain5">0 dB</output>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="../src/renderer.js"></script>
     <script src="../src/media.js"></script>

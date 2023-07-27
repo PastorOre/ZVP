@@ -58,7 +58,6 @@ let boot = () => {
         win.show();
     });
 
-
     openWith();
 }
 
@@ -96,6 +95,5 @@ function openWith(){
         event.returnValue = data
     });
 }
-
 
 

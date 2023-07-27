@@ -1,7 +1,6 @@
 const electron = require('electron');
 const amp = require('../lib/createAmplifier');
-const {fileUrl, saveCurrentVideo, 
-    createDirectories} = require('../lib/fileUtil');
+const {fileUrl, saveCurrentVideo, createDirectories} = require('../lib/fileUtil');
 const dragElement = require('../lib/dragable');
 const path = require('path');
 const fs = require('fs');
@@ -42,6 +41,8 @@ const homedir = require('os').homedir();
         playerStatus = document.getElementById('file-name'),
         dragPargs = document.querySelector('.drag-parags'),
         dragInfo =  document.querySelector('.drag-files-here'),
+        eqlDialog = document.querySelector('.eql-dialog'),
+        eqlDragZone = document.querySelector('.eql-dragzone'),
         aboutOverlay = document.querySelector('.about-overlay');
 
     const aboutDialog = document.querySelector('#about-dialog');
@@ -1096,9 +1097,46 @@ const homedir = require('os').homedir();
     //     }
     // }
 
-    function resumeWithVideoPoster(){
-        let lastVideo = localStorage.getItem("currentVideo");
-        let json = JSON.parse(lastVideo)
+//    function resumeWithVideoPoster(){
+//         let lastVideo = localStorage.getItem("currentVideo");
+//         if(lastVideo != undefined){
+//             let json = JSON.parse(lastVideo)
+//             if(json){
+//                 videoTitle.textContent = `${json.title} - ZVP`;
+//                 playerStatus.textContent = "Paused";
+//                 video.style.cursor = 'pointer';  
+//                 video.src = json.path;
+//                 video.currentTime = parseFloat(json.time);
+//                 video.pause();
+//                 ctxMenu.items[2].enabled = true; 
+//                 ctxMenu.items[2].visible = true; 
+//                 enablingElements(); 
+                
+//             }else{
+//                 console.log("No video found");
+//             }
+//         }
+//     }
+    function eqlSettingsDialog(){
+        const btnOpenSettings = document.getElementById('open-settings');
+        const eqlBtn = document.querySelectorAll('.eql-dragzone > span');
+
+        btnOpenSettings.addEventListener('click', () => {  
+            eqlDialog.classList.toggle('show-eql');
+        });
+
+       eqlBtn[1].addEventListener('click', () => {
+            eqlDialog.style.display = 'none';
+       });
+
+       setEqualizer();
+
+    }
+
+    async function getLastPauseVideo(){
+        let data = fs.readFileSync(path.join(appFolders(), 'video.json'));
+        if(data){
+            let json = JSON.parse(data)
         if(json){
             videoTitle.textContent = `${json.title} - ZVP`;
             playerStatus.textContent = "Paused";
@@ -1113,6 +1151,7 @@ const homedir = require('os').homedir();
         }else{
             console.log("No video found");
         }
+        } 
     }
 
     function openWith(){
@@ -1147,10 +1186,10 @@ const homedir = require('os').homedir();
                 exitFullscreen();
             break;
             case 'ArrowLeft':
-                video.currentTime -= 3 * 60; 
+                video.currentTime -= 30; 
             break;
             case 'ArrowRight':
-                video.currentTime += 3 * 60; 
+                video.currentTime += 30; 
             break;
         }
         if(evt.ctrlKey){
@@ -1161,6 +1200,42 @@ const homedir = require('os').homedir();
             }
         }
     }
+
+function setEqualizer(){
+    let ctx = window.AudioContext || window.webkitAudioContext;
+    let context = new ctx();
+    // var mediaElement = document.getElementById('player');
+    let sourceNode = context.createMediaElementSource(video);
+    // create the equalizer. It's a set of biquad Filters
+    let filters = [];
+    // Set filters
+    [60, 170, 350, 1000, 3500, 10000].forEach(function(freq, i) {
+      let eq = context.createBiquadFilter();
+      eq.frequency.value = freq;
+      eq.type = "peaking";
+      eq.gain.value = 0;
+      filters.push(eq);
+    });
+
+    // Connect filters in serie
+    sourceNode.connect(filters[0]);
+    for(var i = 0; i < filters.length - 1; i++) {
+        filters[i].connect(filters[i+1]);
+    }
+    // connect the last filter to the speakers
+    filters[filters.length - 1].connect(context.destination);
+    const eqlControls = document.querySelectorAll('.controls > input[type="range"]');
+
+    eqlControls.forEach((slider, index) => {
+        slider.addEventListener('change', () => {
+            let value = parseFloat(slider.value);
+            filters[index].gain.value = value;           
+            // update output labels
+            var output = document.querySelector("#gain" + index);
+            output.value = value + " dB";
+        });
+    })
+}
 
 //========= EventListener handlers =============
     openFolderInput.onchange = selectFiles;
@@ -1225,11 +1300,16 @@ const homedir = require('os').homedir();
 //========== Inintialize Functions ===============
     dragElement(dialog, dragzone);
     dragElement(aboutDialog, aboutDragZone);
+    dragElement(eqlDialog, eqlDragZone);
     createDirectories("zvp/playlist");;
     createPlaylist();
     getVideoDetails(); 
     // resumeWithThumbnail();
-    resumeWithVideoPoster();
+    // resumeWithVideoPoster();
     // resumeLastVideo();
     openWith();
+    getLastPauseVideo();
+    eqlSettingsDialog();
+    
+    
 })();
